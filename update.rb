@@ -1,8 +1,5 @@
 require 'csv'
 
-# HANDLE COMMAND LINE ARGS
-# add, remove
-
 # READ FILE
 filepath = File.dirname(__FILE__) + '/courses.csv'
 csv = CSV.read(filepath, headers: true, header_converters: :symbol)
@@ -12,10 +9,10 @@ def parse_repo_name(url)
   url.gsub(/^(\S+)\//, '').gsub('.git', '')
 end
 
-def fetch_origin(repo_name, remote)
+def fetch_origin(repo_name)
   Dir.chdir(repo_name)
   puts "*** FETCHING REMOTE ORIGIN FOR #{repo_name.upcase} ***"
-  %x(git fetch #{remote})
+  %x(git fetch origin)
   Dir.chdir("..")
 end
 
@@ -27,7 +24,7 @@ end
 def get(repo)
   repo_name = parse_repo_name(repo[:repo_url])
   if File.directory?(repo_name)
-    fetch_origin(repo_name, repo[:remote])
+    fetch_origin(repo_name)
   else
     clone_repo(repo[:repo_url])
   end
