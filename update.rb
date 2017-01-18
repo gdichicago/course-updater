@@ -9,13 +9,6 @@ def parse_repo_name(url)
   url.gsub(/^(\S+)\//, '').gsub('.git', '')
 end
 
-def fetch_origin(repo_name)
-  Dir.chdir(repo_name)
-  puts "*** FETCHING REMOTE ORIGIN FOR #{repo_name.upcase} ***"
-  %x(git fetch origin)
-  Dir.chdir("..")
-end
-
 def clone_repo(url)
   puts "*** CLONING INTO #{url.upcase} ***"
   %x(git clone #{url})
@@ -23,11 +16,9 @@ end
 
 def get(repo)
   repo_name = parse_repo_name(repo[:repo_url])
-  if File.directory?(repo_name)
-    fetch_origin(repo_name)
-  else
-    clone_repo(repo[:repo_url])
-  end
+  %x(rm -rf #{repo_name}) if File.directory?(repo_name)
+  clone_repo(repo[:repo_url])
+  %x(rm -rf #{repo_name}/.git)
 end
 
 # RUN
